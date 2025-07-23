@@ -1,20 +1,31 @@
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
-{   
-    GameObject player;
-    Vector3 offset;
+{
+    public Transform topViewPoint;
+    public Transform driverViewPoint;
+    public Transform carTransform; // อ้างอิงรถหลัก
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
-        offset = transform.position - player.transform.position;
-    }
+    private bool isDriverView = false;
 
-    // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
-        transform.position = player.transform.position + offset;
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            isDriverView = !isDriverView;
+        }
+
+        if (isDriverView)
+        {
+            // ให้กล้องตามตำแหน่งและหมุนตาม driverViewPoint ที่อยู่บนรถ
+            transform.position = carTransform.TransformPoint(driverViewPoint.localPosition);
+            transform.rotation = carTransform.rotation * driverViewPoint.localRotation;
+        }
+        else
+        {
+            // มุมมองด้านบนหลังรถ (ตำแหน่งคงที่)
+            transform.position = topViewPoint.position;
+            transform.rotation = topViewPoint.rotation;
+        }
     }
 }
